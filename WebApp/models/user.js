@@ -5,6 +5,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         required : true
     },
+    date : {
+        type : Array,
+    },
     DP : {
         type : String,
     }
