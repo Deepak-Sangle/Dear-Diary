@@ -16,14 +16,16 @@ const InputText = ({setIsNameExists}) => {
         });
         const data = await res.json();
         if(res.ok){
-            // localStorage.setItem('name', name);
-            // setIsNameExists(true);
+            localStorage.setItem('name', name);
+            setIsNameExists(true);
         }
+        document.getElementById('form').reset();
     }
 
     function validateSubmit(event){
         event.preventDefault();
-        if(!isAvailable)
+        if(name=="") alert("Type something :)");
+        else if(!isAvailable && name!='')
             saveName(name);
     }
 
@@ -54,7 +56,7 @@ const InputText = ({setIsNameExists}) => {
         <div>
             <form id="form" method="POST" onSubmit={validateSubmit}>
                 <h3>Your name</h3>
-                <input value={name} onChange={(e)=> setName(e.target.value)} placeholder="Name..." />
+                <input value={name} onChange={(e)=> setName(e.target.value.trim())} placeholder="Name..." />
                 <button type="submit">Submit</button>
             </form>
             

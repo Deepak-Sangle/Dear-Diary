@@ -30,4 +30,24 @@ router.get('/getallnames', (req,res)=> {
         .catch((err)=> console.log(err));
 });
 
+router.put('/addentry', async (req,res)=> {
+    const {name, date, data} = req.body;
+    const entry = {date, data};
+
+    await User.findOneAndUpdate(
+        {name : name}, 
+        {$push : { entry : entry}} 
+    )
+
+    res.send({"success" : true});
+});
+
+router.post('/getdata', (req,res)=> {
+    User.find({name : req.body.name})
+        .then((user)=> {
+            return res.json({user})
+        })
+        .catch((err)=> console.log(err));
+});
+
 module.exports = router;
