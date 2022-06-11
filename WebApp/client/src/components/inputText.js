@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import './input.css';
 
 const InputText = ({setIsNameExists}) => {
 
@@ -50,18 +51,28 @@ const InputText = ({setIsNameExists}) => {
 
     useEffect(()=>{
         checkAvailability();
+        const element2 = document.getElementById('isnotavaliable');
+        const element1 = document.getElementById('isavaliable');
+        if(name==="" && element1!=null) element1.style.opacity = "0";
+        else if(name!=="" && element1!=null) element1.style.opacity = "1";
+        if(name==="" && element2!=null) element2.style.opacity = "0";
+        else if(name!=="" && element2!=null) element2.style.opacity = "1";
     })
 
     return (
-        <div>
+        <div id="nameScreen">
+            <div id="name">Dear Diary</div>
+            <div id="description">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Deleniti error impedit quis </div>
             <form id="form" method="POST" onSubmit={validateSubmit}>
-                <h3>Your name</h3>
-                <input value={name} onChange={(e)=> setName(e.target.value.trim())} placeholder="Name..." />
-                <button type="submit">Submit</button>
+                <h3 id="your-name">Enter your name</h3>
+                <input id="input-name" value={name} onChange={(e)=> setName(e.target.value.trim())} placeholder="" />
+                {!isAvailable && <div className="availability" id="isavaliable">{name} is available</div>}
+                {isAvailable && <div className="availability" id="isnotavaliable">{name} is not available</div>}
+                <br />
+                <div id="submit-div">
+                    <button id="submit-btn" type="submit">Submit</button>
+                </div>
             </form>
-            
-            {name!=='' && !isAvailable && <div>{name} is available</div>}
-            {name!=='' && isAvailable && <div>{name} is not available</div>}
         </div>
     );
 }
