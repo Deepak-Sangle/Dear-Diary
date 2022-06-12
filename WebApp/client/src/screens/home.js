@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import InputText from "../components/inputText";
 import Loading from "../components/loading";
@@ -12,6 +12,33 @@ const HomePage = () => {
     const [date, setDate] = useState([]);
     const [user, setUser] = useState();
     const [selectedTab, setSelectedTab] = useState(0);
+    const [windowSize, setWindowSize] = useState(getWindowSize());
+    const [width, setWidth] = useState();
+    const [height, setHeight] = useState();
+    const [body, setBody] = useState('');
+
+    const ref = useRef(null);
+    const topRef = useRef(null);
+
+
+    useEffect(() => {
+        function handleWindowResize() {
+            setWindowSize(getWindowSize());
+        }
+        window.addEventListener('resize', handleWindowResize);
+        return () => {
+            window.removeEventListener('resize', handleWindowResize);
+        };
+    }, []);
+  
+    useEffect(()=>{
+        changetoMobileView();
+    })
+
+    function getWindowSize() {
+        const {innerWidth, innerHeight} = window;
+        return {innerWidth, innerHeight};
+    }
 
     useEffect(()=>{
         setLoading(false);
@@ -45,6 +72,17 @@ const HomePage = () => {
         const data = await res.json();
         setUser((data.user)[0]);
     }
+
+    const changetoMobileView = ()=> {
+        if(ref.current!=null)
+            setWidth(ref.current.offsetWidth);
+        if(topRef.current!=null)
+            setHeight(topRef.current.offsetHeight);
+    }
+
+    useEffect(()=>{
+        changetoMobileView();
+    },[windowSize])
 
     useEffect(()=>{
         getDate();
@@ -82,8 +120,17 @@ const HomePage = () => {
         document.getElementById('post-data-view').reset();
     }
 
-    const onSelectedEntry = ()=> {
-        
+    const onSelectedEntry = (index)=> {
+        const data = document.getElementsByClassName('entry-data')[index];
+        console.log(data.style.maxHeight);
+        if(data.style.maxHeight === "15em"){
+            data.style.maxHeight = "30em";
+            data.style.overflowY = "scroll";
+        }
+        else{
+            data.style.maxHeight = "15em";
+            data.style.overflowY = "hidden";
+        }
     }
 
     const RenderAllEntries = ()=> {
@@ -93,7 +140,7 @@ const HomePage = () => {
             <div id="entries-div">
                 {reverseArray.map((entry, index)=> {
                     return (
-                        <div onClick={onSelectedEntry} className="entry-box entry-div" key={index}>
+                        <div onClick={()=> onSelectedEntry(index)} className="entry-box entry-div" key={index}>
                             <h3 className="date entry-date">{(entry.date)[0]+'/'+(entry.date)[1]+'/'+(entry.date)[2]}</h3>
                             <div className="entry-data">{entry.data}</div>
                         </div>
@@ -105,7 +152,6 @@ const HomePage = () => {
 
     const changeSelectedIndex = (i)=> {
         setSelectedTab(i);
-        console.log(selectedTab);
     }
 
     return (
@@ -116,20 +162,24 @@ const HomePage = () => {
             }
             {!loading && isNameExists && 
                 <div id="container">
-                    <div id="left-view">
+                    <div ref={topRef} id="mobile-top-view" className="left-view">
+                        <div onClick={()=> changeSelectedIndex(0)} className="logo-btn"><div className="mobile-logo logo writelogo"></div></div>
+                        <div onClick={()=> changeSelectedIndex(1)} className="logo-btn"><div className="mobile-logo logo"></div></div>
+                    </div>
+                    <div ref={ref} className="left-view">
                         <div onClick={()=> changeSelectedIndex(0)} className="logo-btn"><div className="logo writelogo"></div></div>
                         <div onClick={()=> changeSelectedIndex(1)} className="logo-btn"><div className="logo"></div></div>
                     </div>
-                    {selectedTab==0 && <div id="right-view">
+                    {selectedTab==0 && <div style={{marginLeft: width, marginTop: height}} id="right-view">
                         <div className="hello">Hello {name}</div>
                         <div className="date">Today's date : {writeDate()}</div>
                         <form id="post-data-view" method="POST" onSubmit={entrySubmitted}>
-                            <textarea id="data" className="entry-box" name='data' />
+                            <textarea value={body} onChange={(e)=> setBody(e.target.value)} id="data" className="entry-box" name='data' />
                             <br />
                             <button id="submit-btn" type="submit">   Submit   </button>
                         </form>
                     </div>}
-                    {selectedTab==1 && <div id="alt-right-view">
+                    {selectedTab==1 && <div style={{marginLeft: width, marginTop: height}} id="alt-right-view">
                         <div id="get-data-view">
                             <h1 id="entry" className="hello">Your all entries</h1>
                             {user!=undefined && <RenderAllEntries />}

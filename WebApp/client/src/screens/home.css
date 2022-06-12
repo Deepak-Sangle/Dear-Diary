@@ -10,7 +10,7 @@ body{
     flex-flow: row;
     align-items: flex-start;
 }
-#left-view{
+.left-view{
     position: fixed;
     padding: 20px;
     height: 100vh;
@@ -29,8 +29,8 @@ body{
     border-width: 0px;
 }
 .logo{
-    width: 5vw;
-    height: 5vw;
+    width: max(5vw, 5vh, 60px);
+    height: max(5vw, 5vh, 60px);
     background-image: url('../images/read.png');
     background-color: none;
     background-position: center;
@@ -41,16 +41,16 @@ body{
     background-image: url('../images/write.png');
 }
 #right-view{
-    padding: 10px;
-    height: 100vh;
+    padding: 20px;
+    height: 90vh;
     flex-grow: 1;
     display: flex;
-    margin-left: 8vw;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
 }
 .hello{
+    text-align: center;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     margin: 10px;
     font-size: 40px;
@@ -68,9 +68,9 @@ body{
 }
 #data{
     flex-grow: 1;
+    width: 90%;
 }
 .entry-box{
-    width: 90%;
     margin: 10px;
     resize: none;
     outline: none;
@@ -99,7 +99,7 @@ body{
     background-color: #1E90FF;
 }
 #alt-right-view{
-    padding: 10px;
+    padding: 20px;
     flex-grow: 1;
     display: flex;
     margin-left: 8vw;
@@ -112,9 +112,9 @@ body{
     margin : 0px;
 }
 .entry-div{
-    margin : 20px;
-    cursor: pointer;
+    margin : 20px 0px;
     padding-left: 20px;
+    padding-right: 20px;
 }
 .entry-data{
     margin : 10px 0px;
@@ -122,13 +122,36 @@ body{
     text-overflow: ellipsis;
     word-wrap: break-word;
     max-height: 15em;
+    text-align: justify;
     line-height: 1.5em;
     transition: all 0.4s ease-in-out 0s  ;
 }
-.entry-div:hover .entry-data{
-    max-height: 30em;
-    overflow-y: scroll;
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
 }
-.entry-div:hover{
-    position: relative;
+#mobile-top-view{
+    display: none !important;
+}
+
+@media only screen and (max-width : 450px){
+    .left-view{
+        display: none !important;
+    }
+    #right-view, #alt-right-view{
+        margin-left: 5px !important;
+    }
+    #mobile-top-view{
+        display: flex !important;
+        width: 100vw;
+        height: auto;
+        padding: 10px 0px;
+        flex-direction: row;       
+    }
+    .mobile-logo{
+        margin: 0px 10px;
+    }
+    .logo-btn{
+        margin: 0px !important;
+    }
 }
