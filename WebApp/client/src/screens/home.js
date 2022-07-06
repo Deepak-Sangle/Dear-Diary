@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Link } from "react-router-dom";
 import InputText from "../components/inputText";
 import Loading from "../components/loading";
 import './home.css';
@@ -63,7 +62,7 @@ const HomePage = () => {
         setDate(newDate);
     }
 
-    async function getUserData(){
+    const getUserData = async () => {
         const res = await fetch('getdata', {
             method : "POST",
             headers: { 'Content-Type': 'application/json' },
@@ -91,11 +90,11 @@ const HomePage = () => {
 
     function verifyEntry(){
         const length = user.entry.length;
-        if(length==0) return true ;
+        if(length===0) return true ;
         const lastDate = user.entry[length-1].date.slice();
         getDate();
         for(var i=0;i<3;i++){
-            if(lastDate[i]!=date[i]) return true;
+            if(lastDate[i]!==date[i]) return true;
         }
         return false;
     }
@@ -103,7 +102,7 @@ const HomePage = () => {
     const entrySubmitted = async (e)=> {
         e.preventDefault();
         const data = document.getElementById('data').value.trim();
-        if(data==""){
+        if(data===""){
             alert("Write something :)");
         } 
         else if(verifyEntry()){
@@ -118,6 +117,8 @@ const HomePage = () => {
             alert("Entry already added");
         }
         document.getElementById('post-data-view').reset();
+        setSelectedTab(1);
+        setBody("");
     }
 
     const onSelectedEntry = (index)=> {
@@ -170,7 +171,7 @@ const HomePage = () => {
                         <div onClick={()=> changeSelectedIndex(0)} className="logo-btn"><div className="logo writelogo"></div></div>
                         <div onClick={()=> changeSelectedIndex(1)} className="logo-btn"><div className="logo"></div></div>
                     </div>
-                    {selectedTab==0 && <div style={{marginLeft: width, marginTop: height}} id="right-view">
+                    {selectedTab===0 && <div style={{marginLeft: width, marginTop: height}} id="right-view">
                         <div className="hello">Hello {name}</div>
                         <div className="date">Today's date : {writeDate()}</div>
                         <form id="post-data-view" method="POST" onSubmit={entrySubmitted}>
@@ -179,10 +180,10 @@ const HomePage = () => {
                             <button id="submit-btn" type="submit">   Submit   </button>
                         </form>
                     </div>}
-                    {selectedTab==1 && <div style={{marginLeft: width, marginTop: height}} id="alt-right-view">
+                    {selectedTab===1 && <div style={{marginLeft: width, marginTop: height}} id="alt-right-view">
                         <div id="get-data-view">
-                            <h1 id="entry" className="hello">Your all entries</h1>
-                            {user!=undefined && <RenderAllEntries />}
+                            <h1 id="entry" className="hello">Your Journal</h1>
+                            {user!==undefined && <RenderAllEntries />}
                         </div>
                     </div>}
                 </div>

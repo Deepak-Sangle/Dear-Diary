@@ -1,10 +1,8 @@
-import './App.css';
 import {
   BrowserRouter as Router,
   Routes,
   Route,
 } from "react-router-dom";
-import InputText from './components/inputText';
 import HomePage from './screens/home';
 
 function App() {

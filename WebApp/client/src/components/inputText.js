@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import './input.css';
 
 const InputText = ({setIsNameExists}) => {
 
-    let navigate = useNavigate();
     const [isAvailable, setIsAvailable] = useState(true);
     const [usersNames, setUsersNames] = useState([]);
     const [name, setName] = useState('');
@@ -15,7 +13,6 @@ const InputText = ({setIsNameExists}) => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({name})
         });
-        const data = await res.json();
         if(res.ok){
             localStorage.setItem('name', name);
             setIsNameExists(true);
@@ -25,8 +22,8 @@ const InputText = ({setIsNameExists}) => {
 
     function validateSubmit(event){
         event.preventDefault();
-        if(name=="") alert("Type something :)");
-        else if(!isAvailable && name!='')
+        if(name==="") alert("Type something :)");
+        else if(!isAvailable && name!=='')
             saveName(name);
     }
 
