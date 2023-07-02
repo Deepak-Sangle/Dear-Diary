@@ -5,6 +5,8 @@ import './home.css';
 
 const HomePage = () => {
 
+    const {BASE_URI} = require('../constant');
+
     const [loading, setLoading] = useState(true);
     const [isNameExists, setIsNameExists] = useState(false);
     const [name, setName] = useState('');
@@ -63,7 +65,7 @@ const HomePage = () => {
     }
 
     const getUserData = async () => {
-        const res = await fetch('getdata', {
+        const res = await fetch(`${BASE_URI}/getdata`, {
             method : "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({name})
@@ -106,7 +108,7 @@ const HomePage = () => {
             alert("Write something :)");
         } 
         else if(verifyEntry()){
-            const res = await fetch('addentry', {
+            const res = await fetch(`${BASE_URI}/addentry`, {
                 method : "PUT",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({name, date, data})

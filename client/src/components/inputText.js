@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
 import './input.css';
 
+
 const InputText = ({setIsNameExists}) => {
+
+    const {BASE_URI} = require('../constant');
 
     const [isAvailable, setIsAvailable] = useState(true);
     const [usersNames, setUsersNames] = useState([]);
     const [name, setName] = useState('');
 
     const saveName = async (name) => {
-        const res = await fetch('savename', {
+        const res = await fetch(`${BASE_URI}/savename`, {
             method : 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({name})
@@ -29,7 +32,7 @@ const InputText = ({setIsNameExists}) => {
 
     const getAllNames = async ()=> {
         var allNames = [];
-        const res = await fetch('/getallnames');
+        const res = await fetch(`${BASE_URI}/getallnames`);
         const data = await res.json();
         data.User.map((user)=> {
             allNames.push(user.name);
