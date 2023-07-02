@@ -1,11 +1,14 @@
 require("dotenv").config();
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const mongoose = require('mongoose');
 const PORT = process.env.PORT || 5000;
 
 //Requiring models if any
 const User = require('./models/user');
+
+app.use(cors());
 
 //Set up MongoDB Database 
 mongoose.connect(process.env.MONGOURI);

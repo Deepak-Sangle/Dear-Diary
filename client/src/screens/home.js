@@ -65,12 +65,14 @@ const HomePage = () => {
     }
 
     const getUserData = async () => {
+        setLoading(true);
         const res = await fetch(`${BASE_URI}/getdata`, {
             method : "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({name})
         });
         const data = await res.json();
+        setLoading(false);
         setUser((data.user)[0]);
     }
 
@@ -108,12 +110,14 @@ const HomePage = () => {
             alert("Write something :)");
         } 
         else if(verifyEntry()){
+            setLoading(true);
             const res = await fetch(`${BASE_URI}/addentry`, {
                 method : "PUT",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({name, date, data})
             });
-            getUserData();
+            await getUserData();
+            setLoading(false);
         }
         else{
             alert("Entry already added");
