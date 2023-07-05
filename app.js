@@ -3,12 +3,14 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
 const PORT = process.env.PORT || 5000;
 
 //Requiring models if any
 const User = require('./models/user');
 
 app.use(cors());
+app.use(cookieParser());
 
 //Set up MongoDB Database 
 mongoose.connect(process.env.MONGOURI);
@@ -27,6 +29,7 @@ app.use(express.urlencoded({ extended: false }));
 
 //Route Requests
 app.use(require('./routes/auth'));
+app.use(require('./routes/event'));
 
 //Listen Port
 app.listen(PORT, (req,res)=>{

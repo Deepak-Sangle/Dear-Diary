@@ -5,8 +5,12 @@ const userSchema = new mongoose.Schema({
         type: String,
         required : true
     },
-    entry : {
-        type : Array,
+    password : {
+        type : String,
+        required : true
+    },
+    lastEntry : {
+        type : Date,
     },
     DP : {
         type : String,
