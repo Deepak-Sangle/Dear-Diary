@@ -31,7 +31,7 @@ router.post('/add-event', isTokenValid, async (req,res)=> {
 
     event.save()
         .then((result)=> {
-            return res.status(201).send({message : "New event succesfully created : " + event, success : true});
+            return res.status(201).send({message : "New event succesfully created : ", success : true, data : event});
         })
         .catch((err)=> {
             console.log(err);
@@ -39,7 +39,14 @@ router.post('/add-event', isTokenValid, async (req,res)=> {
         })
 });
 
-router.get('/get-all-events/:id', isTokenValid, (req,res)=> {
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}  
+
+router.get('/get-all-events/:id', isTokenValid, async (req,res)=> {
+    console.log("Above : ", Date.now());
+    await sleep(1000*60);
+    console.log("Below : ", Date.now());
 
     const id = req.params.id;
     console.log({paramId : id, loggedId : req.id});

@@ -6,10 +6,13 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const PORT = process.env.PORT || 5000;
 
-//Requiring models if any
-const User = require('./models/user');
+const corsOptions = {
+    origin: ['http://localhost:3000', 'https://dear-diary-api.onrender.com'],
+    credentials: true,
+    methods: ['GET', 'POST']
+};
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(cookieParser());
 
 //Set up MongoDB Database 

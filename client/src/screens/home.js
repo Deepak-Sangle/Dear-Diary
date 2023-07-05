@@ -1,17 +1,19 @@
 import React, { useEffect, useState, useRef } from "react";
-import InputText from "../components/inputText";
 import Loading from "../components/loading";
-import './home.css';
+import './home.css'
+import { useLocation, useNavigate } from "react-router-dom";
 
-const HomePage = () => {
+const HomePage = ({name}) => {
+
+    const navigate = useNavigate();
 
     const {BASE_URI} = require('../constant');
 
+    const location = useLocation();
+
     const [loading, setLoading] = useState(true);
-    const [isNameExists, setIsNameExists] = useState(false);
-    const [name, setName] = useState('');
-    const [date, setDate] = useState([]);
-    const [user, setUser] = useState();
+    const [secondLoading, setSecondLoading] = useState(true);
+    const [events, setEvents] = useState([]);
     const [selectedTab, setSelectedTab] = useState(0);
     const [windowSize, setWindowSize] = useState(getWindowSize());
     const [width, setWidth] = useState();
@@ -21,8 +23,48 @@ const HomePage = () => {
     const ref = useRef(null);
     const topRef = useRef(null);
 
+    const verify = () => {
+        setLoading(true);
+      
+        return new Promise((resolve, reject) => {
+            fetch(`${BASE_URI}/verify-user`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+            })
+            .then((res) => {
+                return res.json();
+            })
+            .then((data) => {
+                if (!data.success === true) {
+                    navigate('/login');
+                }
+                setLoading(false);
+                resolve(data);
+            })
+            .catch((error) => {
+                setLoading(false);
+                reject(error);
+            });
+        });
+    };
+
+    const initializeCalls = async () => {
+        verify()
+            .then((resolved) => {
+                console.log(resolved);
+                getAllEvents();
+            })
+            .catch((err)=> {
+                console.log(err);
+                navigate('/login');
+            })
+    }
 
     useEffect(() => {
+        initializeCalls();
         function handleWindowResize() {
             setWindowSize(getWindowSize());
         }
@@ -41,39 +83,31 @@ const HomePage = () => {
         return {innerWidth, innerHeight};
     }
 
-    useEffect(()=>{
-        setLoading(false);
-        const name = localStorage.getItem('name');
-        if(name) {
-            setIsNameExists(true);
-            setName(name);
-        }
-    }, [isNameExists]);
-
     function writeDate(){
-        const today = date[0] + '/' + date[1] + '/' + date[2];
+        const currentDate = new Date(Date.now());
+        const today = currentDate.getDate() + '/' + (currentDate.getMonth() + 1).toString() + '/' + currentDate.getFullYear();
         return today;
     }
 
-    function getDate(){
-        var today = new Date();
-        var dd = String(today.getDate()).padStart(2, '0');
-        var mm = String(today.getMonth() + 1).padStart(2, '0');
-        var yyyy = today.getFullYear();
-        const newDate = [parseInt(dd),parseInt(mm),parseInt(yyyy)];
-        setDate(newDate);
-    }
-
-    const getUserData = async () => {
-        setLoading(true);
-        const res = await fetch(`${BASE_URI}/getdata`, {
-            method : "POST",
+    const getAllEvents = async () => {
+        setSecondLoading(true);
+        if(location.state === null){
+            setSecondLoading(false);
+            return false;
+        }
+        const res = await fetch(`${BASE_URI}/get-all-events/${location.state._id}`, {
+            method : "GET",
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({name})
+            credentials : "include"
         });
         const data = await res.json();
-        setLoading(false);
-        setUser((data.user)[0]);
+        if(!data.success === true){
+            alert(data.message);
+        }
+        else{
+            setEvents(data.data);
+        }
+        setSecondLoading(false);
     }
 
     const changetoMobileView = ()=> {
@@ -87,47 +121,34 @@ const HomePage = () => {
         changetoMobileView();
     },[windowSize])
 
-    useEffect(()=>{
-        getDate();
-        getUserData();
-    },[name])
-
-    function verifyEntry(){
-        const length = user.entry.length;
-        if(length===0) return true ;
-        const lastDate = user.entry[length-1].date.slice();
-        getDate();
-        for(var i=0;i<3;i++){
-            if(lastDate[i]!==date[i]) return true;
-        }
-        return false;
-    }
-
-    const entrySubmitted = async (e)=> {
+    const onSubmitEvent = async (e)=> {
         e.preventDefault();
         const data = document.getElementById('data').value.trim();
         if(data===""){
-            alert("Write something :)");
+            alert("Write something :(");
         } 
-        else if(verifyEntry()){
+        else {
             setLoading(true);
-            const res = await fetch(`${BASE_URI}/addentry`, {
-                method : "PUT",
+            const res = await fetch(`${BASE_URI}/add-event`, {
+                method : "POST",
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({name, date, data})
+                body: JSON.stringify({body})
             });
-            await getUserData();
+            const data = await res.json();
+            if(!data.success === true){
+                alert(data.message);
+            }
+            else{
+                events.unshift(data.data);
+            }
             setLoading(false);
-        }
-        else{
-            alert("Entry already added");
         }
         document.getElementById('post-data-view').reset();
         setSelectedTab(1);
         setBody("");
     }
 
-    const onSelectedEntry = (index)=> {
+    const onSelectedEvent = (index)=> {
         const data = document.getElementsByClassName('entry-data')[index];
         console.log(data.style.maxHeight);
         if(data.style.maxHeight === "15em"){
@@ -141,13 +162,13 @@ const HomePage = () => {
     }
 
     const RenderAllEntries = ()=> {
-        const reverseArray = user.entry.slice().reverse();
+        const reverseArray = events.slice().reverse();
 
         return (
             <div id="entries-div">
                 {reverseArray.map((entry, index)=> {
                     return (
-                        <div onClick={()=> onSelectedEntry(index)} className="entry-box entry-div" key={index}>
+                        <div onClick={()=> onSelectedEvent(index)} className="entry-box entry-div" key={index}>
                             <h3 className="date entry-date">{(entry.date)[0]+'/'+(entry.date)[1]+'/'+(entry.date)[2]}</h3>
                             <div className="entry-data">{entry.data}</div>
                         </div>
@@ -164,10 +185,8 @@ const HomePage = () => {
     return (
         <div>
             {loading && <Loading />}
-            {!loading && !isNameExists && 
-                <InputText setIsNameExists={setIsNameExists} />
-            }
-            {!loading && isNameExists && 
+            
+            {!loading &&
                 <div id="container">
                     <div ref={topRef} id="mobile-top-view" className="left-view">
                         <div onClick={()=> changeSelectedIndex(0)} className="logo-btn"><div className="mobile-logo logo writelogo"></div></div>
@@ -180,18 +199,21 @@ const HomePage = () => {
                     {selectedTab===0 && <div style={{marginLeft: width, marginTop: height}} id="right-view">
                         <div className="hello">Hello {name}</div>
                         <div className="date">Today's date : {writeDate()}</div>
-                        <form id="post-data-view" method="POST" onSubmit={entrySubmitted}>
+                        <form id="post-data-view" method="POST" onSubmit={onSubmitEvent}>
                             <textarea value={body} onChange={(e)=> setBody(e.target.value)} id="data" className="entry-box" name='data' />
                             <br />
                             <button id="submit-btn" type="submit">   Submit   </button>
                         </form>
                     </div>}
-                    {selectedTab===1 && <div style={{marginLeft: width, marginTop: height}} id="alt-right-view">
+                    {selectedTab===1 && !secondLoading && <div style={{marginLeft: width, marginTop: height}} id="alt-right-view">
                         <div id="get-data-view">
                             <h1 id="entry" className="hello">Your Journal</h1>
-                            {user!==undefined && <RenderAllEntries />}
+                            {events!==undefined && <RenderAllEntries />}
                         </div>
                     </div>}
+                    {selectedTab===1 && secondLoading && <Loading />
+
+                    }
                 </div>
             }
         </div>

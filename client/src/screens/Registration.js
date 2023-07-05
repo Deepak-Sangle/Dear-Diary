@@ -1,24 +1,34 @@
 import React, { useEffect, useState } from "react";
-import './input.css';
+import '../components/input.css'
+import { useNavigate } from "react-router-dom";
 
+const Registration = ({setIsNameExists}) => {
 
-const InputText = ({setIsNameExists}) => {
+    const navigate = useNavigate();
 
     const {BASE_URI} = require('../constant');
 
     const [isAvailable, setIsAvailable] = useState(true);
     const [usersNames, setUsersNames] = useState([]);
     const [name, setName] = useState('');
+    const [passcode, setPasscode] = useState('');
+    const [cpasscode, setCpasscode] = useState('');
 
     const saveName = async (name) => {
-        const res = await fetch(`${BASE_URI}/savename`, {
+        const res = await fetch(`${BASE_URI}/register`, {
             method : 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({name})
+            headers: { 
+                'Content-Type': 'application/json' 
+            },
+            body: JSON.stringify({name, password : passcode, cpassword : cpasscode}),
+            credentials : "include"
         });
-        if(res.ok){
-            localStorage.setItem('name', name);
-            setIsNameExists(true);
+        const data = await res.json();
+        if(data.success === true){
+            navigate('/login');
+        }
+        else{
+            alert(data.message);
         }
         document.getElementById('form').reset();
     }
@@ -31,14 +41,11 @@ const InputText = ({setIsNameExists}) => {
     }
 
     const getAllNames = async ()=> {
-        var allNames = [];
-        const res = await fetch(`${BASE_URI}/getallnames`);
-        const data = await res.json();
-        data.User.map((user)=> {
-            allNames.push(user.name);
+        const res = await fetch(`${BASE_URI}/getallnames`, {
+            credentials : "include"
         });
-        setUsersNames(allNames);
-        checkAvailability();
+        const data = await res.json();
+        setUsersNames(data.data);
     }
 
     const checkAvailability = () => {
@@ -58,14 +65,15 @@ const InputText = ({setIsNameExists}) => {
         if(name==="" && element2!=null) element2.style.opacity = "0";
         else if(name!=="" && element2!=null) element2.style.opacity = "1";
     })
-
+  
     return (
         <div id="nameScreen">
             <div id="name">Dear Diary</div>
-            <div id="description">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Deleniti error impedit quis </div>
             <form id="form" method="POST" onSubmit={validateSubmit}>
-                <h3 id="your-name">Enter your name</h3>
-                <input id="input-name" value={name} onChange={(e)=> setName(e.target.value.trim())} placeholder="" />
+                <h3 id="your-name">Register your account</h3>
+                <input id="input-name" value={name} onChange={(e)=> setName(e.target.value.trim())} placeholder="Enter Name" />
+                <input id="input-name" type="number" value={passcode} onChange={(e)=> setPasscode(e.target.value.trim())} placeholder="Enter Passcode" />
+                <input id="input-name" type="number" value={cpasscode} onChange={(e)=> setCpasscode(e.target.value.trim())} placeholder="Confirm Passcode" />
                 {!isAvailable && <div className="availability" id="isavaliable">{name} is available</div>}
                 {isAvailable && <div className="availability" id="isnotavaliable">{name} is not available</div>}
                 <br />
@@ -77,4 +85,4 @@ const InputText = ({setIsNameExists}) => {
     );
 }
 
-export default InputText;
+export default Registration;

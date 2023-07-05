@@ -33,7 +33,7 @@ router.post('/register', async (req,res)=>{
         else return res.status(500).send({message: err.message, success : false});
         
     } catch (err) {
-        return res.status(500).json({message: err.message, success : false});
+        return res.status(500).send({message: err.message, success : false});
     }
 });
 
@@ -58,20 +58,20 @@ router.post('/login', async (req, res) => {
                 httpOnly: true,
             })
             .status(200)
-            .send({message : "Login Successful", success : true});
+            .send({message : "Login Successful", success : true, data : existingUser});
     } catch(err){
-        return res.status(500).json({message: err.message, success : false});
+        return res.status(500).send({message: err.message, success : false});
     }
 });
 
 router.get('/getallnames', (req,res)=> {
     User.find()
         .then((users)=> {
-            return res.status(200).send({userNames : users.map((user) => user.name), success : true});
+            return res.status(200).send({data : users.map((user) => user.name), success : true});
         })
         .catch((err)=> {
             console.log(err)
-            return res.status(500).send({err, success : false})
+            return res.status(500).send({message : err, success : false})
         });
 });
 
