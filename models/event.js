@@ -11,6 +11,10 @@ const eventSchema = new mongoose.Schema({
     },
     detail : {
         type : String
+    },
+    initVector : {
+        type : String,
+        required : true
     }
 });
 

@@ -5,12 +5,9 @@ async function isTokenValid(req, res, next){
   try {
     const token = req.cookies.token;
     if (!token) return res.status(401).send({message : "Cookies not present for authorization", success : false});
-    console.log({token});
     const verified = jwt.verify(token, process.env.JWT_SECRET);
-    console.log({verified});
     if (!verified) return res.status(401).send({message : "Invalid JWT Token for authorization", success : false});
     const user = await User.findById({_id : verified.id});
-    console.log({user});
     if (!user) return res.status(401).send({message : "User with given JWT Payload does not exists", success : false});
     req.id = verified.id;
     return next();

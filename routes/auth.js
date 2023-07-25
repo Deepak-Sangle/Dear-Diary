@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const crypto = require('crypto');
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
@@ -7,6 +8,7 @@ require("dotenv").config();
 //Requiring Models Schemas
 const User = require('../models/user');
 const { isTokenValid } = require('../middleware/authorization');
+const { encryptData, NUM_BYTES, getMasterInitVector, getMasterSecretKey } = require('../helper/cryptography');
 
 //Getting all requests
 
@@ -24,10 +26,15 @@ router.post('/register', async (req,res)=>{
 
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(password, salt);
+        
+        const originalKey = crypto.randomBytes(NUM_BYTES).toString('hex');
+        
         const newUser = new User({
             name,
             password: hashedPassword,
+            secretKey : encryptData(originalKey, getMasterInitVector(), getMasterSecretKey())
         });
+
         const savedUser = await newUser.save();
         if(savedUser) return res.status(201).send({message : "New user succesfully created : ", success : true});
         else return res.status(500).send({message: err.message, success : false});
@@ -41,16 +48,13 @@ router.post('/login', async (req, res) => {
     try {
         let {name, password} = req.body;
         if(!name || !password) return res.status(203).send({message : "Please enter all the fields", success : "false"});
-        console.log(req.body);
         const existingUser = await User.findOne({name : name});
         if(!existingUser) return res.status(203).send({message : "An account with this name does not exists", success : "false"});
-        console.log(existingUser);
         const isMatch = await bcrypt.compare(password, existingUser.password);
         if (!isMatch) return res.status(400).json({message: "Invalid credentials", success : false});
         const token = jwt.sign({ id: existingUser._id }, process.env.JWT_SECRET, {
             expiresIn : '1d'
         });
-        console.log({token});
         return res
             .cookie('token', token, {
                 expires: new Date(Date.now() + 60*60*24),

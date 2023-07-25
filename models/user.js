@@ -14,6 +14,10 @@ const userSchema = new mongoose.Schema({
     },
     DP : {
         type : String,
+    },
+    secretKey : {
+        type : String,
+        required : true
     }
 });
 
