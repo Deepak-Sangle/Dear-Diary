@@ -167,10 +167,11 @@ const HomePage = ({name}) => {
         return (
             <div id="entries-div">
                 {reverseArray.map((entry, index)=> {
+                    const date = new Date(entry.createdAt);
                     return (
                         <div onClick={()=> onSelectedEvent(index)} className="entry-box entry-div" key={index}>
-                            <h3 className="date entry-date">{(entry.date)[0]+'/'+(entry.date)[1]+'/'+(entry.date)[2]}</h3>
-                            <div className="entry-data">{entry.data}</div>
+                            <h3 className="date entry-date">{date.toLocaleDateString('en-IN')}</h3>
+                            <div className="entry-data">{entry.detail}</div>
                         </div>
                     )
                 })}

@@ -3,7 +3,7 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
-import HomePage from './screens/Home';
+import HomePage from './screens/home';
 import Registration from "./screens/Registration";
 import Login from "./screens/Login";
 

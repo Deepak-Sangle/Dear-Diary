@@ -29,10 +29,10 @@ router.post('/add-event', isTokenValid, async (req,res)=> {
         detail : encryptData(req.body.detail, initVector, secretKey)
     });
  
-    if(user.lastEntry !== undefined){
-        const dateDiff = currentDate - user.lastEntry.getTime();
-        if(dateDiff < 1000*60*60*24) return res.status(400).send({message : "Cannot add event so soon", success : true});
-    }
+    // if(user.lastEntry !== undefined){
+    //     const dateDiff = currentDate - user.lastEntry.getTime();
+    //     if(dateDiff < 1000*60*60*24) return res.status(400).send({message : "Cannot add event so soon", success : true});
+    // }
 
     user.lastEntry = currentDate;
     const savedUser = await user.save();
