@@ -55,9 +55,11 @@ router.post('/login', async (req, res) => {
         const token = jwt.sign({ id: existingUser._id }, process.env.JWT_SECRET, {
             expiresIn : '1d'
         });
+        const tommorow = new Date(Date.now());
+        tommorow.setDate(tommorow.getDate() + 1);
         return res
             .cookie('token', token, {
-                expires: new Date(Date.now() + 60*60*24),
+                expires: tommorow,
                 secure: process.env.NODE_ENV === "production",
                 httpOnly: true,
             })

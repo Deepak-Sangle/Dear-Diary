@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import Loading from "../components/loading";
 import './home.css'
+import axios from 'axios';
 import { useLocation, useNavigate } from "react-router-dom";
 
 const HomePage = ({name}) => {
@@ -27,15 +28,9 @@ const HomePage = ({name}) => {
         setLoading(true);
       
         return new Promise((resolve, reject) => {
-            fetch(`${BASE_URI}/verify-user`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-            })
+            axios.get(`${BASE_URI}/verify-user`)
             .then((res) => {
-                return res.json();
+                return res.data;
             })
             .then((data) => {
                 if (!data.success === true) {
@@ -95,12 +90,8 @@ const HomePage = ({name}) => {
             setSecondLoading(false);
             return false;
         }
-        const res = await fetch(`${BASE_URI}/get-all-events/${location.state._id}`, {
-            method : "GET",
-            headers: { 'Content-Type': 'application/json' },
-            credentials : "include"
-        });
-        const data = await res.json();
+        const res = await axios.get(`${BASE_URI}/get-all-events/${location.state._id}`);
+        const data = await res.data;
         if(!data.success === true){
             alert(data.message);
         }
@@ -129,12 +120,8 @@ const HomePage = ({name}) => {
         } 
         else {
             setLoading(true);
-            const res = await fetch(`${BASE_URI}/add-event`, {
-                method : "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({body})
-            });
-            const data = await res.json();
+            const res = await axios.post(`${BASE_URI}/add-event`,{body});
+            const data = await res.data;
             if(!data.success === true){
                 alert(data.message);
             }
