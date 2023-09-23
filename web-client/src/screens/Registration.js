@@ -18,7 +18,8 @@ const Registration = ({setIsNameExists}) => {
         const res = await fetch(`${BASE_URI}/register`, {
             method : 'POST',
             headers: { 
-                'Content-Type': 'application/json' 
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
             },
             body: JSON.stringify({name, password : passcode, cpassword : cpasscode}),
             credentials : "include"
@@ -42,7 +43,11 @@ const Registration = ({setIsNameExists}) => {
 
     const getAllNames = async ()=> {
         const res = await fetch(`${BASE_URI}/getallnames`, {
-            credentials : "include"
+            credentials : "include",
+            headers : {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+            }
         });
         const data = await res.json();
         setUsersNames(data.data);

@@ -31,6 +31,7 @@ const HomePage = ({name}) => {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
                 },
                 credentials: 'include',
             })
@@ -97,7 +98,10 @@ const HomePage = ({name}) => {
         }
         const res = await fetch(`${BASE_URI}/get-all-events/${location.state._id}`, {
             method : "GET",
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+            },
             credentials : "include"
         });
         const data = await res.json();
@@ -131,7 +135,10 @@ const HomePage = ({name}) => {
             setLoading(true);
             const res = await fetch(`${BASE_URI}/add-event`, {
                 method : "POST",
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                },
                 body: JSON.stringify({body})
             });
             const data = await res.json();
