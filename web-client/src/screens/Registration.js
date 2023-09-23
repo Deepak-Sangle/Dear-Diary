@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import '../components/input.css'
+import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 
 const Registration = ({setIsNameExists}) => {
@@ -15,16 +16,8 @@ const Registration = ({setIsNameExists}) => {
     const [cpasscode, setCpasscode] = useState('');
 
     const saveName = async (name) => {
-        const res = await fetch(`${BASE_URI}/register`, {
-            method : 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-            },
-            body: JSON.stringify({name, password : passcode, cpassword : cpasscode}),
-            credentials : "include"
-        });
-        const data = await res.json();
+        const res = await axios.post(`${BASE_URI}/register`, {name, password : passcode, cpassword : cpasscode});
+        const data = await res.data;
         if(data.success === true){
             navigate('/login');
         }
@@ -42,14 +35,8 @@ const Registration = ({setIsNameExists}) => {
     }
 
     const getAllNames = async ()=> {
-        const res = await fetch(`${BASE_URI}/getallnames`, {
-            credentials : "include",
-            headers : {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-            }
-        });
-        const data = await res.json();
+        const res = await axios.get(`${BASE_URI}/getallnames`);
+        const data = await res.data;
         setUsersNames(data.data);
     }
 

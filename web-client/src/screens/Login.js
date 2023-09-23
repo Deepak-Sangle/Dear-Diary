@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import '../components/input.css'
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 const Login = () => {
 
@@ -12,16 +13,8 @@ const Login = () => {
   const [passcode, setPasscode] = useState('');
 
   const login = async () => {
-    const res = await fetch(`${BASE_URI}/login`, {
-        method : 'POST',
-        headers: { 
-            'Content-Type': 'application/json' ,
-            'Access-Control-Allow-Origin': '*',
-        },
-        body: JSON.stringify({name, password : passcode}),
-        credentials : "include"
-    });
-    const data = await res.json();
+    const res = await axios.post(`${BASE_URI}/login`, {name, password : passcode});
+    const data = await res.data;
     console.log(data);
     if(data.success === true){
         navigate('/', {state : data.data});
