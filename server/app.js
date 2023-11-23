@@ -33,6 +33,7 @@ app.use(express.urlencoded({ extended: false }));
 //Route Requests
 app.use(require('./routes/auth'));
 app.use(require('./routes/event'));
+app.use(require('./routes/external'));
 
 //Listen Port
 app.listen(PORT, (req,res)=>{
