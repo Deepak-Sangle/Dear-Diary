@@ -120,13 +120,18 @@ const HomePage = ({name}) => {
         } 
         else {
             setLoading(true);
-            const res = await axios.post(`${BASE_URI}/add-event`,{body});
-            const data = await res.data;
-            if(!data.success === true){
-                alert(data.message);
+            try{
+                const res = await axios.post(`${BASE_URI}/add-event`,{body});
+                const data = await res.data;
+                if(!data.success === true){
+                    alert(data.message);
+                }
+                else{
+                    events.unshift(data.data);
+                }
             }
-            else{
-                events.unshift(data.data);
+            catch(e){
+              alert(e.response.data.message);
             }
             setLoading(false);
         }
