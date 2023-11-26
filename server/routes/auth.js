@@ -92,4 +92,15 @@ router.get('/verify-user', isTokenValid, async (req, res)=> {
     return res.status(200).send({message : "user is authorized for the given request", success : true}); 
 });
 
+router.get('/get-user', isTokenValid, async (req, res)=> {
+    try{
+        const user = await User.findById(req.id);
+        if(!user) return res.status(203).send({message : "User not found", success : false});
+        return res.status(200).send({message : "User found", success : true, data : user});
+    }
+    catch(err){
+        return res.status(500).send({message : err.message, success : false});
+    }
+});
+
 module.exports = router;

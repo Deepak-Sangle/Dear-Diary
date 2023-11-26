@@ -4,7 +4,7 @@ import './home.css'
 import axios from 'axios';
 import { useLocation, useNavigate } from "react-router-dom";
 
-const HomePage = ({name}) => {
+const HomePage = () => {
 
     const navigate = useNavigate();
 
@@ -12,6 +12,7 @@ const HomePage = ({name}) => {
 
     const location = useLocation();
 
+    const [name, setName] = useState('');
     const [loading, setLoading] = useState(true);
     const [secondLoading, setSecondLoading] = useState(true);
     const [events, setEvents] = useState([]);
@@ -29,24 +30,51 @@ const HomePage = ({name}) => {
       
         return new Promise((resolve, reject) => {
             axios.get(`${BASE_URI}/verify-user`)
-            .then((res) => {
-                return res.data;
-            })
-            .then((data) => {
-                if (!data.success === true) {
-                    navigate('/login');
-                }
-                setLoading(false);
-                resolve(data);
-            })
-            .catch((error) => {
-                setLoading(false);
-                reject(error);
-            });
+                .then((res) => {
+                    return res.data;
+                })
+                .then((data) => {
+                    if (!data.success === true) {
+                        navigate('/login');
+                    }
+                    setLoading(false);
+                    resolve(data);
+                })
+                .catch((error) => {
+                    setLoading(false);
+                    reject(error);
+                });
         });
     };
 
+    const setUserName = () => {
+        return new Promise((resolve, reject) => {
+            axios.get(`${BASE_URI}/get-user`)
+                .then((res) => {
+                    return res.data;
+                })
+                .then((data) => {
+                    if (!data.success === true) {
+                        navigate('/login');
+                    }
+                    resolve(data);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        });
+    }
+
     const initializeCalls = async () => {
+        setUserName()
+            .then((resolved) => {
+                setName(resolved.data.name);
+            })
+            .catch((err)=> {
+                console.log(err);
+                navigate('/login');
+            });
+            
         verify()
             .then((resolved) => {
                 console.log(resolved);

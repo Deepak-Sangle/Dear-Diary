@@ -17,17 +17,15 @@ const Registration = () => {
 
     const saveName = async (name) => {
         try{
-            const password = parseInt(passcode);
-            const cpassword = parseInt(cpasscode);
-            if(password !== cpassword){
+            if(passcode !== cpasscode){
                 alert("Passwords should be matched");
                 return ;
             }
-            if(password < 1000 || cpassword < 1000) {
+            if(passcode.length < 4) {
                 alert("You have to make your password of exactly 4 digit long");
                 return ;
             }
-            const res = await axios.post(`${BASE_URI}/register`, {name, password, cpassword});
+            const res = await axios.post(`${BASE_URI}/register`, {name, password : passcode, cpassword : cpasscode});
             const data = await res.data;
             if(data.success === true){
                 navigate('/login');
