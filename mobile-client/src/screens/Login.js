@@ -31,12 +31,19 @@ export default function Login() {
 
   function validateSubmit(event){
       event.preventDefault();
-      if(name==="") alert("Enter valid username");
-      else if(passcode.join('').length !== 4) alert("Enter exactly 4 digit password");
+      if(name==="") {
+        alert("Enter valid username");
+        return;
+      }
+      else if(passcode.join('').length !== 4) {
+        alert("Enter exactly 4 digit password");
+        return;
+      }
       setNewStyles({
         backgroundColor: "#2d2d2d",
         color: "white"
       });
+      console.log(name, passcode.join(''));
       // login();
   }
 
@@ -62,7 +69,7 @@ export default function Login() {
   }
 
   return(
-    <ScrollView>
+    <ScrollView >
       <ImageBackground source={require('../../assets/images/bg.jpg')} style={styles.nameScreen}>
         <Text style={styles.name}>Dear Diary</Text>
         <View>
@@ -71,7 +78,7 @@ export default function Login() {
             Login to your account
           </Text>
 
-          <TextInput style={styles.inputName} value={name} onChange={setName} placeholder="Enter Username" />
+          <TextInput style={styles.inputName} value={name} onChangeText={setName} placeholder="Enter Username" />
           <Text style={styles.yourName}>Enter Password</Text>
           <View style={styles.passcodeView}>
 
@@ -89,9 +96,12 @@ export default function Login() {
               )
             })}
           </View>
-          {/* <TouchableHighlight underlayColor={'gray'}>
-            <Text onPress={validateSubmit} style={{...styles.submit, ...styles.inputName, ...new_styles}}  type="submit" >Enter</Text>
-          </TouchableHighlight> */}
+          <TouchableOpacity>
+            <View style={{margin : 20,}}>
+              {/* <Text onPress={validateSubmit} style={{...styles.submit, ...styles.inputName, ...new_styles}}  type="submit" >Enter</Text> */}
+              <Button title='Enter' onPress={validateSubmit} color="#2d2d2d"></Button>
+            </View>
+          </TouchableOpacity>
           <View style={styles.passcodeView}>
             <Text style={styles.wantTo}>Want to Register? </Text> 
             <Text onPress={() => Linking.openURL("/register")} style={{...styles.wantTo, ...styles.wantToA}}>

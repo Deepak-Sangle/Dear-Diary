@@ -1,16 +1,19 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
+
+const WIDTH = Dimensions.get('screen').width;
+const HEIGHT = Dimensions.get('screen').height;
 
 const styles = StyleSheet.create({
   nameScreen: {
-    marginTop: 20,
     padding: 20,
+    height : HEIGHT,
     textAlign: "center",
-    borderRadius: 10,
   },
   name: {
     textAlign : "center",
     fontSize: 40,
     margin: 30,
+    marginTop: 100,
     fontFamily: "Inter_900Black"
   },
   description: {
@@ -25,6 +28,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     flexWrap: "wrap",
+    marginVertical : 20,
     justifyContent : "center"
   },
   yourName: {
@@ -32,10 +36,6 @@ const styles = StyleSheet.create({
     fontFamily: "NotoSansGeorgian_400Regular",
     fontSize : 20,
   },
-  // // "input::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button": {
-  // //   WebkitAppearance: "none",
-  // //   margin: "0"
-  // // },
   inputName: {
     margin: 20,
     padding: 10,
@@ -47,7 +47,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 20,
   },
-  // "submit:hover": { backgroundColor: "#2d2d2d", color: "white" },
   submit: { 
     textAlign: "center" 
   },
