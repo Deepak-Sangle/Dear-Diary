@@ -8,6 +8,7 @@ import { Roboto_400Regular } from '@expo-google-fonts/roboto';
 import { Nunito_400Regular } from '@expo-google-fonts/nunito';
 import { Dosis_400Regular } from '@expo-google-fonts/dosis';
 import { NotoSansGeorgian_400Regular } from '@expo-google-fonts/noto-sans-georgian';
+import Registration from './src/screens/Registration';
 
 export default function App() {
   
@@ -21,7 +22,8 @@ export default function App() {
 
   return (
     <View>
-      <Login/>
+      <Registration />
+      {/* <Login/> */}
     </View>
   );
 }

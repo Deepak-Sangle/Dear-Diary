@@ -52,14 +52,13 @@ const styles = StyleSheet.create({
   },
   availability: {
     fontFamily: "Nunito_400Regular",
-    letterSpacing: "0.5"
+    letterSpacing: 0.5
   },
   isnotavaliable: { 
     color: "red" 
   },
   wantTo: {
     fontFamily: "NotoSansGeorgian_400Regular",
-    // textDecoration: "none",
     color: "#2d2d2d"
   },
   wantToA: { 

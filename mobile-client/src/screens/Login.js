@@ -1,5 +1,3 @@
-// simple react native component
-
 import React, { Component, useState, useRef } from 'react';
 import { Linking, View, Text, StyleSheet, TextInput, Button, TouchableHighlight, TouchableOpacity, Image, ScrollView, ImageBackground } from 'react-native';
 import styles from '../styles/login';
