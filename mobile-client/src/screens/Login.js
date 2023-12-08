@@ -2,29 +2,39 @@ import React, { Component, useState, useRef } from 'react';
 import { Linking, View, Text, StyleSheet, TextInput, Button, TouchableHighlight, TouchableOpacity, Image, ScrollView, ImageBackground } from 'react-native';
 import styles from '../styles/login';
 
-export default function Login() {
+const Login = ({navigation}) => {
 
   const [name, setName] = useState('');
   const [passcode, setPasscode] = useState(['','','','']);
-  const [new_styles, setNewStyles] = useState({});
+
+  const {BASE_URI, PRIMARY_COLOR} = require('../constant.js');
 
   const passcodeRefs = Array.from({ length: 4 }, () => useRef(null));
 
   const login = async () => {
     try{
-      const res = await axios.post(`${BASE_URI}/login`, {name, password : passcode.join('')});
-      const data = await res.data;
+      const res = await fetch(`${BASE_URI}/login`, {
+        method : 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body : JSON.stringify({
+          name, 
+          password : passcode.join('')
+        })
+      });
+      const data = await res.json();
       if(data.success === true){
-          navigate('/', {state : data.data});
+        navigation.navigate('/', {state : data.data});
       }
       else{
-          alert(data.message);
+        alert(data.message);
       }
     }
     catch(e){
       alert(e.response.data.message);
     }
-    document.getElementById('form').reset();
   }
 
   function validateSubmit(event){
@@ -37,12 +47,7 @@ export default function Login() {
         alert("Enter exactly 4 digit password");
         return;
       }
-      setNewStyles({
-        backgroundColor: "#2d2d2d",
-        color: "white"
-      });
-      console.log(name, passcode.join(''));
-      // login();
+      login();
   }
 
   const setCorrectPasscode = (text, i) => {
@@ -72,11 +77,12 @@ export default function Login() {
         <Text style={styles.name}>Dear Diary</Text>
         <View>
           
-          <Text style={styles.yourName}>
+          <Text style={{...styles.yourName, marginBottom : 30, fontSize : 25}}>
             Login to your account
           </Text>
 
-          <TextInput style={styles.inputName} value={name} onChangeText={setName} placeholder="Enter Username" />
+          <Text style={styles.yourName}>Enter Username</Text>
+          <TextInput style={styles.inputName} value={name} onChangeText={setName} />
           <Text style={styles.yourName}>Enter Password</Text>
           <View style={styles.passcodeView}>
 
@@ -96,15 +102,16 @@ export default function Login() {
           </View>
           <TouchableOpacity>
             <View style={{margin : 20,}}>
-              {/* <Text onPress={validateSubmit} style={{...styles.submit, ...styles.inputName, ...new_styles}}  type="submit" >Enter</Text> */}
-              <Button title='Enter' onPress={validateSubmit} color="#2d2d2d"></Button>
+              <Button title='Enter' onPress={validateSubmit} color={PRIMARY_COLOR}></Button>
             </View>
           </TouchableOpacity>
           <View style={styles.passcodeView}>
             <Text style={styles.wantTo}>Want to Register? </Text> 
-            <Text onPress={() => Linking.openURL("/register")} style={{...styles.wantTo, ...styles.wantToA}}>
-              Click Here
-            </Text>
+            <TouchableOpacity onPress={() => navigation.navigate("/register")} >
+              <Text style={{...styles.wantTo, ...styles.wantToA}}>
+                Click Here
+              </Text>
+            </TouchableOpacity>
           </View>
 
         </View>
@@ -112,3 +119,5 @@ export default function Login() {
     </ScrollView>
   )
 }
+
+export default Login;
