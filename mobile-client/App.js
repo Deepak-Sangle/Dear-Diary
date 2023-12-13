@@ -14,6 +14,7 @@ import { NotoSansGeorgian_400Regular, NotoSansGeorgian_900Black } from '@expo-go
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {CardStyleInterpolators} from '@react-navigation/stack'
+import HomePage from './src/screens/HomePage';
 
 export default function App() {
   
@@ -33,7 +34,6 @@ export default function App() {
         screenOptions={{
           headerShown: false,
           animation : "slide_from_right"
-          // cardStyleInterpolator : CardStyleInterpolators.forHorizontalIOS 
         }}        
       >
         <Stack.Screen
@@ -43,6 +43,10 @@ export default function App() {
         <Stack.Screen
           name="/register"
           component={Registration}
+        />
+        <Stack.Screen
+          name="/"
+          component={HomePage}
         />
       </Stack.Navigator>
     </NavigationContainer>

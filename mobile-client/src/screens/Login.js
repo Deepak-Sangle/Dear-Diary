@@ -19,6 +19,7 @@ const Login = ({navigation}) => {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
+        credentials : 'include',
         body : JSON.stringify({
           name, 
           password : passcode.join('')
@@ -82,7 +83,7 @@ const Login = ({navigation}) => {
           </Text>
 
           <Text style={styles.yourName}>Enter Username</Text>
-          <TextInput style={styles.inputName} value={name} onChangeText={setName} />
+          <TextInput style={styles.inputName} value={name} onChangeText={(text) => setName(text.trim())} />
           <Text style={styles.yourName}>Enter Password</Text>
           <View style={styles.passcodeView}>
 

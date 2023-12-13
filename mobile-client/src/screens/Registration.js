@@ -37,6 +37,7 @@ const Registration = ({ navigation }) => {
       }
       const res = await fetch(`${BASE_URI}/register`, {
         method: "POST",
+        credentials : 'include',
         headers : {
           Accept: "application/json",
           "Content-Type": "application/json",
@@ -72,6 +73,7 @@ const Registration = ({ navigation }) => {
     try {
       const res = await fetch(`${BASE_URI}/getallnames`, {
         method: "GET",
+        credentials : 'include',
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
