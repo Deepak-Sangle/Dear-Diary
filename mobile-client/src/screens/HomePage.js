@@ -3,17 +3,16 @@ import {
   View,
   Text,
   StyleSheet,
-  KeyboardAvoidingView,
   TextInput,
   Button,
   TouchableHighlight,
+  Animated,
   TouchableOpacity,
-  Image,
+  Easing,
   ScrollView,
   ImageBackground,
 } from "react-native";
 import styles from "../styles/home";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 const HomePage = ({ route, navigation }) => {
   const { BASE_URI, PRIMARY_COLOR } = require("../constant");
@@ -23,10 +22,10 @@ const HomePage = ({ route, navigation }) => {
   const [loading, setLoading] = useState(true);
   const [secondLoading, setSecondLoading] = useState(true);
   const [events, setEvents] = useState([]);
-  const [openEvents, setOpenEvent] = useState([]);
+  const [animatedHeights, setAnimatedHeights] = useState([]);
   const [selectedTab, setSelectedTab] = useState(0);
   const [body, setBody] = useState("");
-
+  
   const verify = () => {
     setLoading(true);
 
@@ -135,6 +134,7 @@ const HomePage = ({ route, navigation }) => {
       alert(data.message);
     } else {
       setEvents(data.data);
+      setAnimatedHeights(Array.from({ length: data.data.length }, () => (new Animated.Value(0))));
     }
     setSecondLoading(false);
   };
@@ -172,10 +172,12 @@ const HomePage = ({ route, navigation }) => {
   };
 
   const onSelectedEvent = ( index) => {
-    let newOpenEvents = [];
-    if(openEvents.includes(index)) newOpenEvents = openEvents.filter((item) => item!==index);
-    else newOpenEvents = [...openEvents, index];
-    setOpenEvent(newOpenEvents);
+    Animated.timing(animatedHeights[index], {
+      toValue: 1 - animatedHeights[index]._value,
+      duration: 3000,
+      easing: Easing.linear,
+      useNativeDriver: false,
+    }).start();
   };
 
   const RenderAllEntries = () => {
@@ -185,6 +187,10 @@ const HomePage = ({ route, navigation }) => {
       <View style={styles.entriesDiv}>
         {reverseArray.map((entry, index) => {
           const date = new Date(entry.createdAt);
+          const maxHeight = animatedHeights[index].interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, 10000],
+          });
           return (
             <TouchableOpacity activeOpacity={0.9}
               onPress={() => onSelectedEvent(index)}
@@ -194,13 +200,11 @@ const HomePage = ({ route, navigation }) => {
               <Text style={{...styles.date, ...styles.entryDate}}>
                 {date.toLocaleDateString("en-IN")}
               </Text>
-              <View  
-                style={{...styles.entryData, maxHeight : openEvents.includes(index) ? 50000 : 0}}
-              >
+              <Animated.View style={{...styles.entryData, maxHeight}}>
                 <Text style={styles.entryText} >
                   {entry.detail}
                 </Text>
-              </View>
+              </Animated.View>
             </TouchableOpacity>
           );
         })}
