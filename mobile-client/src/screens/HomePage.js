@@ -12,7 +12,9 @@ import {
   ScrollView,
   ImageBackground,
 } from "react-native";
+
 import styles from "../styles/home";
+import { MaterialIcons } from '@expo/vector-icons';
 
 const HomePage = ({ route, navigation }) => {
   const { BASE_URI, PRIMARY_COLOR } = require("../constant");
@@ -22,6 +24,8 @@ const HomePage = ({ route, navigation }) => {
   const [loading, setLoading] = useState(true);
   const [secondLoading, setSecondLoading] = useState(true);
   const [events, setEvents] = useState([]);
+  const [openEvents, setOpenEvents] = useState([]);
+  const [scroll, setScroll] = useState(true);
   const [animatedHeights, setAnimatedHeights] = useState([]);
   const [selectedTab, setSelectedTab] = useState(0);
   const [body, setBody] = useState("");
@@ -135,6 +139,7 @@ const HomePage = ({ route, navigation }) => {
     } else {
       setEvents(data.data);
       setAnimatedHeights(Array.from({ length: data.data.length }, () => (new Animated.Value(0))));
+      setOpenEvents(Array.from({ length: data.data.length }, () => false));
     }
     setSecondLoading(false);
   };
@@ -171,13 +176,18 @@ const HomePage = ({ route, navigation }) => {
     setBody("");
   };
 
-  const onSelectedEvent = ( index) => {
+  const onSelectedEvent = (index) => {
+    const updatedValue = animatedHeights[index]._value === 0 ? 1 : 0;
     Animated.timing(animatedHeights[index], {
-      toValue: 1 - animatedHeights[index]._value,
-      duration: 3000,
+      toValue: updatedValue,
+      duration: 500,
       easing: Easing.linear,
       useNativeDriver: false,
-    }).start();
+    }).start(()=> {
+      const temp = [...openEvents];
+      temp[index] = !temp[index];
+      setOpenEvents(temp);
+    });
   };
 
   const RenderAllEntries = () => {
@@ -189,23 +199,39 @@ const HomePage = ({ route, navigation }) => {
           const date = new Date(entry.createdAt);
           const maxHeight = animatedHeights[index].interpolate({
             inputRange: [0, 1],
-            outputRange: [0, 10000],
+            outputRange: [0, 500],
           });
           return (
-            <TouchableOpacity activeOpacity={0.9}
-              onPress={() => onSelectedEvent(index)}
+            <View
               style={{...styles.entryBox}}
               key={index}
             >
-              <Text style={{...styles.date, ...styles.entryDate}}>
-                {date.toLocaleDateString("en-IN")}
-              </Text>
-              <Animated.View style={{...styles.entryData, maxHeight}}>
-                <Text style={styles.entryText} >
-                  {entry.detail}
-                </Text>
-              </Animated.View>
-            </TouchableOpacity>
+              <TouchableOpacity 
+                onPress={() => onSelectedEvent(index)} 
+                style={{flexDirection : "row", justifyContent : "space-between"}}
+              >
+                <View style={styles.entryDate}>
+                  <Text style={styles.entryDate}>
+                    {date.toLocaleDateString("en-IN")}
+                  </Text>
+                </View>
+                <View>
+                  {openEvents[index]  && <MaterialIcons name="expand-more" size={24} color="black" />}
+                  {!openEvents[index] && <MaterialIcons name="expand-less" size={24} color="black" />}
+                </View>
+              </TouchableOpacity>
+              {/* <ScrollView 
+                onTouchStart={()=> setScroll(false)}
+                onMomentumScrollEnd={() => setScroll(true)}
+                onScrollEndDrag={() => setScroll(true)}
+              > */}
+                <Animated.View style={{...styles.entryData, maxHeight}}>
+                    <Text style={styles.entryText} >
+                      {entry.detail}
+                    </Text>
+                </Animated.View>
+              {/* </ScrollView> */}
+            </View>
           );
         })}
       </View>
@@ -220,7 +246,7 @@ const HomePage = ({ route, navigation }) => {
     <View style={{flex : 1}}>
        
        <View style={styles.container}>
-        <ScrollView style={styles.container}>
+        <ScrollView scrollEnabled={scroll} style={styles.container}>
           {selectedTab===0 && <View style={styles.rightView}>
               <Text style={styles.hello}>Hello {name}</Text>
               <Text style={styles.date}>Today's date : {writeDate()}</Text>

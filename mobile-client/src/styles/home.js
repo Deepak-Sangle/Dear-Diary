@@ -49,15 +49,19 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     padding: 10,
     fontFamily: "Nunito_400Regular",
-    borderRadius: 10,
+    borderRadius: 7,
     elevation : 2,
   },
-  // "#data:focus": { boxShadow: "0px 0px 15px 1px grey" },
   entry: { 
     textAlign: "center" 
   },
   entryDate: { 
-    margin: 0 
+    margin: 0,
+    display : "flex",
+    flexDirection : "row",
+    justifyContent : "center",
+    alignItems : "center",
+    color : PRIMARY_COLOR,
   },
   entriesDiv: {
     marginTop : 20,
