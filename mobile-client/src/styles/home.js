@@ -73,7 +73,6 @@ const styles = StyleSheet.create({
   entryData: {
     marginHorizontal : 5,
     lineHeight: 1.5,
-    flex : 1,
   },
   mobileTopView: {
     display: "flex",

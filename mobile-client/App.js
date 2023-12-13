@@ -15,7 +15,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {CardStyleInterpolators} from '@react-navigation/stack'
 import HomePage from './src/screens/HomePage';
-
+import { ScrollView , Text, View} from 'react-native';
 export default function App() {
   
   let [fontsLoaded, fontError] = useFonts({
@@ -53,3 +53,45 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
+// export default function App() {
+
+//   return(
+//    <ScrollView style={{ backgroundColor : "red", padding :10}}>
+//     <Text style={{fontSize : 40, margin : 30}}>aeoufdhn</Text>
+//     <Text style={{fontSize : 40, margin : 30}}>aeoufdhn</Text>
+//     <Text style={{fontSize : 40, margin : 30}}>aeoufdhn</Text>
+//     <Text style={{fontSize : 40, margin : 30}}>aeoufdhn</Text>
+//     <ScrollView nestedScrollEnabled={true} style={{maxHeight : 500, backgroundColor : "green",}}>
+
+//         <Text style={{fontSize : 40, margin : 30}}>insied</Text>
+//         <Text style={{fontSize : 40, margin : 30}}>insied</Text>
+//         <Text style={{fontSize : 40, margin : 30}}>insied</Text>
+//         <Text style={{fontSize : 40, margin : 30}}>insied</Text>
+//         <Text style={{fontSize : 40, margin : 30}}>insied</Text>
+//         <Text style={{fontSize : 40, margin : 30}}>insied</Text>
+//         <Text style={{fontSize : 40, margin : 30}}>insied</Text>
+//         <Text style={{fontSize : 40, margin : 30}}>insied</Text>
+
+//     </ScrollView>
+//         <Text style={{fontSize : 40, margin : 30}}>insied</Text>
+//         <Text style={{fontSize : 40, margin : 30}}>insied</Text>
+//     <ScrollView nestedScrollEnabled={true} style={{maxHeight : 500, backgroundColor : "green",}}>
+
+//         <Text style={{fontSize : 40, margin : 30}}>insied</Text>
+//         <Text style={{fontSize : 40, margin : 30}}>insied</Text>
+//         <Text style={{fontSize : 40, margin : 30}}>insied</Text>
+//         <Text style={{fontSize : 40, margin : 30}}>insied</Text>
+//         <Text style={{fontSize : 40, margin : 30}}>insied</Text>
+//         <Text style={{fontSize : 40, margin : 30}}>insied</Text>
+//         <Text style={{fontSize : 40, margin : 30}}>insied</Text>
+//         <Text style={{fontSize : 40, margin : 30}}>insied</Text>
+//         <Text style={{fontSize : 40, margin : 30}}>insied</Text>
+//         <Text style={{fontSize : 40, margin : 30}}>insied</Text>
+
+//     </ScrollView>
+//     <Text style={{fontSize : 40, margin : 30}}>aeoufdhn</Text>
+//     <Text style={{fontSize : 40, margin : 30}}>aeoufdhn</Text>
+//    </ScrollView> 
+//   )
+// }

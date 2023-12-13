@@ -220,17 +220,16 @@ const HomePage = ({ route, navigation }) => {
                   {!openEvents[index] && <MaterialIcons name="expand-less" size={24} color="black" />}
                 </View>
               </TouchableOpacity>
-              {/* <ScrollView 
-                onTouchStart={()=> setScroll(false)}
-                onMomentumScrollEnd={() => setScroll(true)}
-                onScrollEndDrag={() => setScroll(true)}
-              > */}
-                <Animated.View style={{...styles.entryData, maxHeight}}>
+              <Animated.ScrollView 
+                nestedScrollEnabled={true}
+                style={{maxHeight}}
+              >
+                <View style={{...styles.entryData}}>
                     <Text style={styles.entryText} >
                       {entry.detail}
                     </Text>
-                </Animated.View>
-              {/* </ScrollView> */}
+                </View>
+              </Animated.ScrollView>
             </View>
           );
         })}
