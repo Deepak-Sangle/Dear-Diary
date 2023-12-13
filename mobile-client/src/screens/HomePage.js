@@ -9,6 +9,7 @@ import {
   Animated,
   TouchableOpacity,
   Easing,
+  Keyboard,
   ScrollView,
   ImageBackground,
 } from "react-native";
@@ -29,7 +30,8 @@ const HomePage = ({ route, navigation }) => {
   const [animatedHeights, setAnimatedHeights] = useState([]);
   const [selectedTab, setSelectedTab] = useState(0);
   const [body, setBody] = useState("");
-  
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
   const verify = () => {
     setLoading(true);
 
@@ -180,7 +182,7 @@ const HomePage = ({ route, navigation }) => {
     const updatedValue = animatedHeights[index]._value === 0 ? 1 : 0;
     Animated.timing(animatedHeights[index], {
       toValue: updatedValue,
-      duration: 500,
+      duration: 300,
       easing: Easing.linear,
       useNativeDriver: false,
     }).start(()=> {
@@ -216,11 +218,12 @@ const HomePage = ({ route, navigation }) => {
                   </Text>
                 </View>
                 <View>
-                  {openEvents[index]  && <MaterialIcons name="expand-more" size={24} color="black" />}
-                  {!openEvents[index] && <MaterialIcons name="expand-less" size={24} color="black" />}
+                  {!openEvents[index]  && <MaterialIcons name="expand-more" size={24} color="black" />}
+                  {openEvents[index] && <MaterialIcons name="expand-less" size={24} color="black" />}
                 </View>
               </TouchableOpacity>
               <Animated.ScrollView 
+                showsVerticalScrollIndicator={false}
                 nestedScrollEnabled={true}
                 style={{maxHeight}}
               >
@@ -230,12 +233,42 @@ const HomePage = ({ route, navigation }) => {
                     </Text>
                 </View>
               </Animated.ScrollView>
+              {openEvents[index] && <TouchableOpacity 
+                onPress={() => onSelectedEvent(index)} 
+                style={{flexDirection : "row", justifyContent : "flex-end"}}
+              >
+                <View>
+                  <MaterialIcons name="expand-less" size={24} color="black" />
+                </View>
+              </TouchableOpacity>}
+
             </View>
           );
         })}
       </View>
     );
   };
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true); // or some other action
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false); // or some other action
+      }
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
+
 
   const changeSelectedIndex = (i) => {
     setSelectedTab(i);
@@ -245,7 +278,11 @@ const HomePage = ({ route, navigation }) => {
     <View style={{flex : 1}}>
        
        <View style={styles.container}>
-        <ScrollView scrollEnabled={scroll} style={styles.container}>
+        <ScrollView 
+          scrollEnabled={scroll} 
+          style={styles.container}
+          showsVerticalScrollIndicator={false}
+        >
           {selectedTab===0 && <View style={styles.rightView}>
               <Text style={styles.hello}>Hello {name}</Text>
               <Text style={styles.date}>Today's date : {writeDate()}</Text>
@@ -253,7 +290,7 @@ const HomePage = ({ route, navigation }) => {
                   <TextInput 
                     multiline 
                     value={body} 
-                    numberOfLines={65}
+                    numberOfLines={45}
                     onChangeText={setBody} 
                     textAlignVertical="top"
                     style={{...styles.data, ...styles.entryBox}} 
@@ -271,14 +308,14 @@ const HomePage = ({ route, navigation }) => {
 
         </ScrollView>
         
-        <View style={styles.mobileTopView}>
+        {!isKeyboardVisible && <View style={styles.mobileTopView}>
            <TouchableOpacity onPressOut={() => changeSelectedIndex(0)}>
              <ImageBackground resizeMode="contain" source={require('../../assets/images/read.png')} style={styles.logo}></ImageBackground>
            </TouchableOpacity>
            <TouchableOpacity onPressOut={() => changeSelectedIndex(1)}>
              <ImageBackground resizeMode="contain" source={require('../../assets/images/write.png')} style={styles.logo}></ImageBackground>
            </TouchableOpacity>
-         </View>
+         </View>}
       </View>
   </View>
   );
