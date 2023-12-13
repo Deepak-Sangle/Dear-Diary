@@ -1,11 +1,12 @@
 import React, { Component, useState, useRef } from 'react';
-import { Linking, View, Text, StyleSheet, TextInput, Button, TouchableHighlight, TouchableOpacity, Image, ScrollView, ImageBackground } from 'react-native';
+import { Linking, View, Text, StyleSheet, ActivityIndicator, TextInput, Button, TouchableHighlight, TouchableOpacity, Image, ScrollView, ImageBackground } from 'react-native';
 import styles from '../styles/login';
 
 const Login = ({navigation}) => {
 
   const [name, setName] = useState('');
   const [passcode, setPasscode] = useState(['','','','']);
+  const [loading, setLoading] = useState(false);
 
   const {BASE_URI, PRIMARY_COLOR} = require('../constant.js');
 
@@ -13,6 +14,7 @@ const Login = ({navigation}) => {
 
   const login = async () => {
     try{
+      setLoading(true);
       const res = await fetch(`${BASE_URI}/login`, {
         method : 'POST',
         headers: {
@@ -26,6 +28,7 @@ const Login = ({navigation}) => {
         })
       });
       const data = await res.json();
+      setLoading(false);
       if(data.success === true){
         navigation.navigate('/', {state : data.data});
       }
@@ -35,6 +38,7 @@ const Login = ({navigation}) => {
     }
     catch(e){
       alert(e.response.data.message);
+      setLoading(false);
     }
   }
 
@@ -117,6 +121,9 @@ const Login = ({navigation}) => {
 
         </View>
       </ImageBackground>
+      {loading && <View style={styles.loadingView}>
+        <ActivityIndicator size="large" color={PRIMARY_COLOR} />
+      </View>}
     </ScrollView>
   )
 }

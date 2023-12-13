@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   Easing,
   Keyboard,
+  ActivityIndicator,
   ScrollView,
   ImageBackground,
 } from "react-native";
@@ -304,7 +305,9 @@ const HomePage = ({ route, navigation }) => {
                   {events!==undefined && <RenderAllEntries />}
               </View>
           </View>}
-
+          {selectedTab===1 && secondLoading && <View style={styles.loadingView}>
+            <ActivityIndicator size="large" color={PRIMARY_COLOR} />
+          </View>}
 
         </ScrollView>
         

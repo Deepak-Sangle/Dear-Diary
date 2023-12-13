@@ -55,6 +55,13 @@ const styles = StyleSheet.create({
   entry: { 
     textAlign: "center" 
   },
+  loadingView : {
+    transform : "scale(1.5)",
+    display : "flex", 
+    height : HEIGHT,
+    justifyContent : "center", 
+    alignItems : "center"
+  },
   entryDate: { 
     margin: 0,
     display : "flex",

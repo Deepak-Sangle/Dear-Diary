@@ -18,6 +18,18 @@ const styles = StyleSheet.create({
     marginBottom : 10,
     fontFamily: "Inter_900Black"
   },
+  loadingView : {
+    transform : 'scale(1.5)',
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    backgroundColor : "black",
+    opacity : 0.7,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
   description: {
     fontFamily: "Nunito_400Regular",
     color : PRIMARY_COLOR,

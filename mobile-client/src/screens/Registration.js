@@ -6,6 +6,7 @@ import {
   TextInput,
   Button,
   TouchableHighlight,
+  ActivityIndicator,
   TouchableOpacity,
   Image,
   ScrollView,
@@ -22,6 +23,7 @@ const Registration = ({ navigation }) => {
   const [isAvailable, setIsAvailable] = useState(true);
   const [usersNames, setUsersNames] = useState([]);
   const [name, setName] = useState("");
+  const [loading, setLoading] = useState(false);
   const [passcode, setPasscode] = useState("");
   const [cpasscode, setCpasscode] = useState("");
   
@@ -35,6 +37,7 @@ const Registration = ({ navigation }) => {
         alert("You have to make your password of exactly 4 digit long");
         return;
       }
+      setLoading(true);
       const res = await fetch(`${BASE_URI}/register`, {
         method: "POST",
         credentials : 'include',
@@ -49,12 +52,14 @@ const Registration = ({ navigation }) => {
         }),
       });
       const data = await res.json();
+      setLoading(false);
       if (data.success === true) {
         navigation.navigate("/login");
       } else {
         alert(data.message);
       }
     } catch (e) {
+      setLoading(false);
       alert(e.response.data.message);
     }
   };
@@ -66,6 +71,9 @@ const Registration = ({ navigation }) => {
       return;
     } else if (isAvailable && name !== "") {
       saveName();
+    } else if (!isAvailable) {
+      alert("Username is not available");
+      return;
     }
   }
 
@@ -194,6 +202,9 @@ const Registration = ({ navigation }) => {
           </View>
         </View>
       </ImageBackground>
+      {loading && <View style={styles.loadingView}>
+        <ActivityIndicator size="large" color={PRIMARY_COLOR} />
+      </View>}
     </ScrollView>
   );
 };
