@@ -179,18 +179,30 @@ const HomePage = ({ route, navigation }) => {
     setBody("");
   };
 
-  const onSelectedEvent = (index) => {
+  const changeOpenEvents = (index) => {
+    return new Promise((resolve, reject)=> {
+      const temp = [...openEvents];
+      temp[index] = !temp[index];
+      setOpenEvents(temp);
+      resolve();
+    });
+  }
+
+  const animate = (index) => {
     const updatedValue = animatedHeights[index]._value === 0 ? 1 : 0;
     Animated.timing(animatedHeights[index], {
       toValue: updatedValue,
       duration: 300,
       easing: Easing.linear,
       useNativeDriver: false,
-    }).start(()=> {
-      const temp = [...openEvents];
-      temp[index] = !temp[index];
-      setOpenEvents(temp);
-    });
+    }).start()
+  }
+
+  const onSelectedEvent = (index) => {
+    changeOpenEvents(index)
+      .then(() => {
+        animate(index);
+      });
   };
 
   const RenderAllEntries = () => {

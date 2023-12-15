@@ -56,14 +56,25 @@ const Login = ({navigation}) => {
   }
 
   const setCorrectPasscode = (text, i) => {
-    if(text.length > 1) return;
-    const acceptedKeys = ['','0','1','2','3','4','5','6','7','8','9'];
-    if(!acceptedKeys.includes(text)) return;
-    if(text.length === 1 && i<3) {
-      passcodeRefs[i+1].current.focus();
-    }
+    let index = 0;
+    console.log({text, i});
     const new_passcode = [...passcode];
-    new_passcode[i] = text;
+    if(text.length === 0) {
+      new_passcode[i] = '';
+      setPasscode(new_passcode);
+      return;
+    }
+    while(text.length > index) {
+      const acceptedKeys = ['','0','1','2','3','4','5','6','7','8','9'];
+      if(!acceptedKeys.includes(text[index])) return;
+      new_passcode[i] = text[index];
+      if(i<3) {
+        passcodeRefs[i+1].current.focus();
+      }
+      else break;
+      i++;
+      index++;
+    }
     setPasscode(new_passcode);
   }
 
