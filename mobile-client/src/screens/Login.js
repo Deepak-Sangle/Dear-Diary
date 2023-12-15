@@ -49,9 +49,7 @@ const Login = ({navigation}) => {
     }
   }
 
-  function validateSubmit(event){
-      event.preventDefault();
-      console.log({name, password, index});
+  function validateSubmit(){
       if(name==="") {
         alert("Enter valid username");
         return;
@@ -99,9 +97,6 @@ const Login = ({navigation}) => {
       setPassword(password.slice(0, -1));
       if(index > 0) setIndex(index-1);
     }
-    else if(e.nativeEvent.key === 'Enter'){
-      validateSubmit(e);
-    }
     else if(e.nativeEvent.key >= 0 && e.nativeEvent.key <= 9){
       if(index === 4) return;
       passcodeRefs[index].current.setNativeProps({
@@ -119,12 +114,6 @@ const Login = ({navigation}) => {
     passwordRef.current.focus();
   }
 
-  const moveNext = (e) => {
-    if(e.nativeEvent.key === 'Enter'){
-      openKeyboard();
-    }
-  }
-
   return(
     <ScrollView >
       <ImageBackground source={require('../../assets/images/bg.jpg')} style={styles.nameScreen}>
@@ -137,16 +126,16 @@ const Login = ({navigation}) => {
 
           {!nameStored && <View>
             <Text style={styles.yourName}>Enter Username</Text>
-            <TextInput style={styles.inputName} blurOnSubmit={false} onKeyPress={moveNext} value={name} onChangeText={(text) => setName(text.trim())} />
+            <TextInput style={styles.inputName} blurOnSubmit={false} onSubmitEditing={openKeyboard} value={name} onChangeText={(text) => setName(text.trim())} />
           </View>}
           {nameStored && <View>
             <Text style={styles.yourName}>Welcome Back!</Text>
-            <TextInput style={styles.inputName} value={name} editable={false} />
+            <TextInput style={{...styles.inputName, fontSize : 26}} value={name} editable={false} />
           </View>}
 
           <Text style={styles.yourName}>Enter Password</Text>
 
-          {!nameStored && <View style={styles.passcodeView}>
+          {nameStored && <View style={styles.passcodeView}>
             {[0,1,2,3].map((i)=> {
               return(
                 <TouchableOpacity activeOpacity={0.5} ref={passcodeRefs[i]} onPress={openKeyboard} key={i} style={styles.passcodeDot}></TouchableOpacity>
@@ -160,13 +149,14 @@ const Login = ({navigation}) => {
               value={password}
               maxLength={4}
               ref={passwordRef}
+              onSubmitEditing={validateSubmit}
               autoFocus={true}
               onKeyPress={changePasscodeView}
             />
 
           </View>}
 
-          {nameStored && <TextInput
+          {!nameStored && <TextInput
             style={styles.inputName}
             placeholderTextColor={PRIMARY_COLOR}
             inputMode='numeric'
