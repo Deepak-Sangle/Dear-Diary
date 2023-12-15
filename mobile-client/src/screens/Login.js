@@ -1,16 +1,21 @@
-import React, { Component, useState, useRef } from 'react';
+import React, { Component, useState, useRef, useEffect } from 'react';
 import { Linking, View, Text, StyleSheet, ActivityIndicator, TextInput, Button, TouchableHighlight, TouchableOpacity, Image, ScrollView, ImageBackground } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import styles from '../styles/login';
 
 const Login = ({navigation}) => {
 
   const [name, setName] = useState('');
-  const [passcode, setPasscode] = useState(['','','','']);
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [nameStored, setNameStored] = useState(false);
+  const [index, setIndex] = useState(0);
 
   const {BASE_URI, PRIMARY_COLOR} = require('../constant.js');
 
   const passcodeRefs = Array.from({ length: 4 }, () => useRef(null));
+  const passwordRef = useRef(null);
 
   const login = async () => {
     try{
@@ -24,15 +29,17 @@ const Login = ({navigation}) => {
         credentials : 'include',
         body : JSON.stringify({
           name, 
-          password : passcode.join('')
+          password 
         })
       });
       const data = await res.json();
-      setLoading(false);
       if(data.success === true){
+        await AsyncStorage.setItem('name', name);
+        setLoading(false);
         navigation.navigate('/', {state : data.data});
       }
       else{
+        setLoading(false);
         alert(data.message);
       }
     }
@@ -44,46 +51,77 @@ const Login = ({navigation}) => {
 
   function validateSubmit(event){
       event.preventDefault();
+      console.log({name, password, index});
       if(name==="") {
         alert("Enter valid username");
         return;
       }
-      else if(passcode.join('').length !== 4) {
+      else if(password.length !== 4) {
         alert("Enter exactly 4 digit password");
         return;
       }
       login();
   }
 
-  const setCorrectPasscode = (text, i) => {
-    let index = 0;
-    console.log({text, i});
-    const new_passcode = [...passcode];
-    if(text.length === 0) {
-      new_passcode[i] = '';
-      setPasscode(new_passcode);
-      return;
-    }
-    while(text.length > index) {
-      const acceptedKeys = ['','0','1','2','3','4','5','6','7','8','9'];
-      if(!acceptedKeys.includes(text[index])) return;
-      new_passcode[i] = text[index];
-      if(i<3) {
-        passcodeRefs[i+1].current.focus();
+  const findAsyncName = async ()=> {
+    try{
+      setLoading(true);
+      const storedName = await AsyncStorage.getItem('name');
+      if(storedName === null){
+        setNameStored(false);
       }
-      else break;
-      i++;
-      index++;
+      else{
+        setNameStored(true);
+        setName(storedName);
+      }
+      setLoading(false);
+    } catch(e){
+      console.log(e);
+      setLoading(false);
+      alert("Something went wrong");
+      return ;
     }
-    setPasscode(new_passcode);
   }
 
-  const onPressedKey = (e, i) => {
-    if(e.nativeEvent.key === 'Backspace' && passcode[i] === '' && i>0) {
-      passcodeRefs[i-1].current.focus();
+  useEffect(()=> {
+    findAsyncName();
+  }, [])
+
+  const changePasscodeView = (e) => {
+    console.log(e.nativeEvent.key);
+    if(e.nativeEvent.key === 'Backspace'){
+      if(index === 0) return;
+      passcodeRefs[index-1].current.setNativeProps({
+        style : {
+          backgroundColor : 'transparent'
+        }
+      })
+      setPassword(password.slice(0, -1));
+      if(index > 0) setIndex(index-1);
     }
-    if(e.nativeEvent.key === 'Enter') {
-      validateSubmit(e.nativeEvent);
+    else if(e.nativeEvent.key === 'Enter'){
+      validateSubmit(e);
+    }
+    else if(e.nativeEvent.key >= 0 && e.nativeEvent.key <= 9){
+      if(index === 4) return;
+      passcodeRefs[index].current.setNativeProps({
+        style : {
+          backgroundColor : PRIMARY_COLOR
+        }
+      });
+      if(password.length < 4) setPassword(password + e.nativeEvent.key);
+      if(index <= 3) setIndex(index+1);
+    }
+  }
+
+  const openKeyboard = () => {
+    console.log("open keyboard");
+    passwordRef.current.focus();
+  }
+
+  const moveNext = (e) => {
+    if(e.nativeEvent.key === 'Enter'){
+      openKeyboard();
     }
   }
 
@@ -97,25 +135,46 @@ const Login = ({navigation}) => {
             Login to your account
           </Text>
 
-          <Text style={styles.yourName}>Enter Username</Text>
-          <TextInput style={styles.inputName} value={name} onChangeText={(text) => setName(text.trim())} />
-          <Text style={styles.yourName}>Enter Password</Text>
-          <View style={styles.passcodeView}>
+          {!nameStored && <View>
+            <Text style={styles.yourName}>Enter Username</Text>
+            <TextInput style={styles.inputName} blurOnSubmit={false} onKeyPress={moveNext} value={name} onChangeText={(text) => setName(text.trim())} />
+          </View>}
+          {nameStored && <View>
+            <Text style={styles.yourName}>Welcome Back!</Text>
+            <TextInput style={styles.inputName} value={name} editable={false} />
+          </View>}
 
+          <Text style={styles.yourName}>Enter Password</Text>
+
+          {!nameStored && <View style={styles.passcodeView}>
             {[0,1,2,3].map((i)=> {
               return(
-                <TextInput 
-                  key={i} 
-                  ref={passcodeRefs[i]}
-                  style={{...styles.inputName, ...styles.passcodeBox}} 
-                  value={passcode[i]} 
-                  inputMode='numeric'
-                  onKeyPress={(e) => onPressedKey(e,i)} 
-                  onChangeText={(text) => setCorrectPasscode(text, i)} 
-                />
+                <TouchableOpacity activeOpacity={0.5} ref={passcodeRefs[i]} onPress={openKeyboard} key={i} style={styles.passcodeDot}></TouchableOpacity>
               )
             })}
-          </View>
+
+            <TextInput
+              style={{display : "none"}}
+              placeholderTextColor={PRIMARY_COLOR}
+              inputMode='numeric'
+              value={password}
+              maxLength={4}
+              ref={passwordRef}
+              autoFocus={true}
+              onKeyPress={changePasscodeView}
+            />
+
+          </View>}
+
+          {nameStored && <TextInput
+            style={styles.inputName}
+            placeholderTextColor={PRIMARY_COLOR}
+            inputMode='numeric'
+            value={password}
+            maxLength={4}
+            onChangeText={setPassword}
+          />}
+
           <TouchableOpacity>
             <View style={{margin : 20,}}>
               <Button title='Enter' onPress={validateSubmit} color={PRIMARY_COLOR}></Button>

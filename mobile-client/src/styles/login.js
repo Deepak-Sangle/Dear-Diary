@@ -40,6 +40,14 @@ const styles = StyleSheet.create({
     width: "18%", 
     margin : 10,
   },
+  passcodeDot : {
+    marginHorizontal : 10,
+    width : 24,
+    height : 24,
+    borderRadius : 50,
+    borderWidth : 2,
+    borderColor : PRIMARY_COLOR
+  },
   passcodeView : {
     display: "flex",
     flexDirection: "row",
