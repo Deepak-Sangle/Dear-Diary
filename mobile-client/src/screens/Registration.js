@@ -90,8 +90,9 @@ const Registration = ({ navigation }) => {
       const data = await res.json();
       setUsersNames(data.data);
       console.log(data.data);
-    } catch (e) {
+    } catch (e) { 
       console.log("error getting names: ", e);
+      alert("Something went wrong");
     }
   };
 

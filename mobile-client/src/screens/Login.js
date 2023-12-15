@@ -115,7 +115,7 @@ const Login = ({navigation}) => {
   }
 
   return(
-    <ScrollView >
+    <ScrollView keyboardShouldPersistTaps={nameStored ? 'always' : 'never'} >
       <ImageBackground source={require('../../assets/images/bg.jpg')} style={styles.nameScreen}>
         <Text style={styles.name}>Dear Diary</Text>
         <View>
