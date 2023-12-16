@@ -46,22 +46,17 @@ router.post('/register', async (req,res)=>{
 
 router.post('/login', async (req, res) => {
     try {
-        console.log(new Date().getTime, "login request received");
         let {name, password} = req.body;
-        console.log(new Date().getTime, {name, password});
         if(!name || !password) return res.status(203).send({message : "Please enter all the fields", success : "false"});
         const existingUser = await User.findOne({name : name});
         if(!existingUser) return res.status(203).send({message : "An account with this name does not exists", success : "false"});
-        console.log(new Date().getTime, "existing user found", existingUser);
         const isMatch = await bcrypt.compare(password, existingUser.password);
         if (!isMatch) return res.status(400).json({message: "Invalid credentials", success : false});
-        console.log(new Date().getTime, "password matched");
         const token = jwt.sign({ id: existingUser._id }, process.env.JWT_SECRET, {
             expiresIn : '1d'
         });
         const tommorow = new Date(Date.now());
         tommorow.setDate(tommorow.getDate() + 1);
-        console.log("token generated");
         return res
             .cookie('token', token, {
                 expires: tommorow,
@@ -71,7 +66,6 @@ router.post('/login', async (req, res) => {
             .status(200)
             .send({message : "Login Successful", success : true, data : existingUser});
     } catch(err){
-        console.log("Error: ", err);
         return res.status(500).send({message: err.message, success : false});
     }
 });
